@@ -5,13 +5,16 @@
 <configuration>
 
     <typeAliases>
-<!--        <typeAlias type="edu.ssafy.enjoytrip.dto.infoboard.InfoBoardDto" alias="infoBoardDto"/>-->
-
+        <typeAlias type="com.ssafy.trip.dto.plan.PlanDto" alias="PlanDto"/>
+        <typeAlias type="com.ssafy.trip.dto.place.PlaceDto" alias="PlaceDto"/>
+        <typeAlias type="com.ssafy.trip.dto.place.PlanPlaceDto" alias="PlanPlaceDto"/>
     </typeAliases>
 
     <mappers>
-<!--        <mapper resource="mybatis/*/*.xml"/>-->
-
+        <mapper resource="mybatis/planMapper.xml"/>
+        <mapper resource="mybatis/placeMapper.xml"/>
     </mappers>
 
 </configuration>
+
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.ssafy.trip.repository.place.PlaceRepository">
+
+    <resultMap id="PlaceDtoMap" type="PlaceDto">
+        <result column="place_id" property="place_id" jdbcType="VARCHAR" javaType="String" />
+        <result column="formatted_phone_number" property="formatted_phone_number" jdbcType="VARCHAR" javaType="String" />
+        <result column="url" property="url" jdbcType="VARCHAR" javaType="String" />
+        <result column="international_phone_number" property="international_phone_number" jdbcType="VARCHAR" javaType="String" />
+        <result column="formatted_address" property="formatted_address" jdbcType="VARCHAR" javaType="String" />
+        <result column="name" property="name" jdbcType="VARCHAR" javaType="String" />
+        <result column="photoreference" property="photoreference" jdbcType="VARCHAR" javaType="String" />
+        <result column="overview" property="overview" jdbcType="VARCHAR" javaType="String" />
+    </resultMap>
+
+    <resultMap id="PlanPlaceDtoMap" type="PlanPlaceDto">
+        <result column="plan_id" property="plan_id" jdbcType="INTEGER" javaType="int" />
+        <result column="place_id" property="place_id" jdbcType="VARCHAR" javaType="String" />
+        <result column="sequence" property="sequence" jdbcType="INTEGER" javaType="int" />
+    </resultMap>
+
+
+
+    <select id="placeIdByPlanId" parameterType="int" resultType="String">
+        select place_id
+        from plan_place_info
+        where plan_id = #{plan_id}
+        order by sequence;
+    </select>
+
+    <select id="infoByPlaceId" parameterType="String" resultMap="PlaceDtoMap">
+        select *
+        from place_info
+        where place_id = #{place_id};
+    </select>
+
+    <insert id="placeInfo" parameterType="PlaceDto">
+        insert into place_info
+        (place_id, formatted_phone_number, url, international_phone_number, formatted_address, name, photoreference, overview)
+        values (#{place_id}, #{formatted_phone_number}, #{url}, #{international_phone_number}, #{formatted_address},
+        #{name}, #{photoreference}, #{overview});
+    </insert>
+
+    <insert id="addPlanPlace" parameterType="PlanPlaceDto">
+        insert into plan_place_info
+        (plan_id, place_id, sequence)
+        values (#{plan_id}, #{place_id}, #{sequence});
+    </insert>
+
+    <select id="checkPlaceId" parameterType="String" resultType="int">
+        select count(place_id)
+        from place_info
+        where place_id = #{place_id};
+    </select>
+
+    <delete id="deletePlanPlace" parameterType="int">
+        delete
+        from plan_place_info
+        where plan_id = #{plan_id};
+    </delete>
+
+
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.repository.plan.PlanRepository">
+    <resultMap id="PlanDtoMap" type="PlanDto">
+        <result column="plan_id" property="plan_id" jdbcType="INTEGER" javaType="int" />
+        <result column="user_id" property="user_id" jdbcType="VARCHAR" javaType="String" />
+        <result column="title" property="title" jdbcType="VARCHAR" javaType="String" />
+        <result column="content" property="content" jdbcType="VARCHAR" javaType="String" />
+        <result column="register_time" property="register_time" jdbcType="TIMESTAMP" javaType="String" />
+        <result column="start_date" property="start_date" jdbcType="TIMESTAMP" javaType="String" />
+        <result column="end_date" property="end_date" jdbcType="TIMESTAMP" javaType="String" />
+        <result column="like" property="like" jdbcType="INTEGER" javaType="int" />
+        <result column="hit" property="hit" jdbcType="INTEGER" javaType="int" />
+    </resultMap>
+
+
+    <select id="listByUserId" parameterType="String" resultMap="PlanDtoMap">
+        select *
+        from travel_plan
+        where user_id = #{user_id}
+        order by register_time desc limit 12;
+    </select>
+
+    <insert id="makePlan" parameterType="PlanDto">
+        insert into travel_plan
+        (user_id, title, content, start_date, end_date)
+        values(#{user_id}, #{title}, #{content}, #{start_date}, #{end_date});
+    </insert>
+
+    <select id="getPlanId" parameterType="String" resultType="int">
+        select plan_id
+        from travel_plan
+        where user_id = #{user_id}
+        order by register_time desc limit 1;
+    </select>
+
+    <delete id="deletePlan" parameterType="int">
+        delete
+        from travel_plan
+        where plan_id = #{plan_id};
+    </delete>
+
+    <update id="updatePlan" parameterType="PlanDto">
+        update travel_plan
+        set title = #{title},
+        content = #{content},
+        start_date = #{start_date},
+        end_date = #{end_date}
+        where plan_id = #{plan_id};
+    </update>
+
+    <select id="detailByPlanId" parameterType="int" resultMap="PlanDtoMap">
+        select *
+        from travel_plan
+        where plan_id = #{plan_id};
+    </select>
+
+    <update id="updateHit" parameterType="int">
+        update travel_plan
+        set hit = hit + 1
+        where plan_id = #{plan_id};
+    </update>
+
+    <update id="upLike" parameterType="int">
+        update travel_plan
+        set `like` = `like` + 1
+        where plan_id = #{plan_id};
+    </update>
+
+    <update id="downLike" parameterType="int">
+        update travel_plan
+        set `like` = `like` - 1
+        where plan_id = #{plan_id};
+    </update>
+
+</mapper>
