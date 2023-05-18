@@ -10,6 +10,12 @@
         <module name="trip" />
       </profile>
     </annotationProcessing>
+<<<<<<< HEAD
+=======
+    <bytecodeTargetLevel>
+      <module name="trip" target="1.8" />
+    </bytecodeTargetLevel>
+>>>>>>> main
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
