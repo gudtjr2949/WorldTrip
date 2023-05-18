@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+        namespace="com.ssafy.trip.repository.user.UserRepository">
+    <resultMap id="userMap" type="userDto">
+        <result column="user_id" property="user_id" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="user_pw" property="user_pw" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="user_name" property="user_name" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="user_email" property="user_email" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="user_domain" property="user_domain" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="register_time" property="register_time" jdbcType="TIMESTAMP"
+                javaType="String"/>
+        <result column="role" property="role" jdbcType="VARCHAR"
+                javaType="String"/>
+    </resultMap>
+
+    <select id="idCheck" parameterType="String" resultType="int">
+        select count(user_id)
+        from user
+        where user_id = #{user_id}
+    </select>
+
+    <insert id="join" parameterType="userDto">
+        insert into user (user_id, user_pw, user_name, user_email, user_domain)
+        values (#{user_id}, #{user_pw}, #{user_name}, #{user_email}, #{user_domain})
+    </insert>
+
+    <select id="login" parameterType="map" resultType="userDto">
+        select *
+        from user
+        where user_id = #{user_id} and user_pw = #{user_pw}
+    </select>
+
+    <select id="follower_list" parameterType="String" resultMap="userMap">
+        select *
+        from user
+        where user_id in (select user_id from follower where follower_id = #{user_id})
+    </select>
+
+    <select id="following_list" parameterType="String" resultMap="userMap">
+        select *
+        from user
+        where user_id in (select following_id from following where user_id = #{user_id})
+    </select>
+
+    <update id="modify" parameterType="userDto">
+        update user
+        set user_pw = #{user_pw},
+            user_name = #{user_name},
+            user_email = #{user_email},
+            user_domain = #{user_domain}
+        where user_id = #{user_id}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from user
+        where user_id=#{user_id}
+    </delete>
+
+    <select id="checkAdmin" parameterType="String" resultType="String">
+        select role
+        from user
+        where user_id = #{user_id}
+    </select>
+</mapper>

@@ -5,13 +5,15 @@
 <configuration>
 
     <typeAliases>
-<!--        <typeAlias type="edu.ssafy.enjoytrip.dto.infoboard.InfoBoardDto" alias="infoBoardDto"/>-->
-
+        <typeAlias type="com.ssafy.trip.dto.review.ReviewDto" alias="reviewDto"/>
+        <typeAlias type="com.ssafy.trip.dto.user.FollowerDto" alias="followerDto"/>
+        <typeAlias type="com.ssafy.trip.dto.user.FollowingDto" alias="followingDto"/>
+        <typeAlias type="com.ssafy.trip.dto.user.UserDto" alias="userDto"/>
     </typeAliases>
 
     <mappers>
-<!--        <mapper resource="mybatis/*/*.xml"/>-->
-
+        <mapper resource="mybatis/ReviewMapper.xml"/>
+        <mapper resource="mybatis/UserMapper.xml"/>
     </mappers>
 
 </configuration>
