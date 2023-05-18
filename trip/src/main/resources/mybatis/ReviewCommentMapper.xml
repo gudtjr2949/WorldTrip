@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+        namespace="com.ssafy.trip.repository.review.ReviewCommentRepository">
+    <resultMap id="reviewCommentMap" type="reviewCommentDto">
+        <result column="review_id" property="review_id"
+                jdbcType="INTEGER" javaType="int"/>
+        <result column="comment_id" property="comment_id"
+                jdbcType="INTEGER" javaType="int"/>
+        <result column="user_id" property="user_id" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="content" property="content" jdbcType="VARCHAR"
+                javaType="String"/>
+        <result column="register_time" property="register_time"
+                jdbcType="TIMESTAMP" javaType="String"/>
+        <result column="like" property="like" jdbcType="INTEGER"
+                javaType="int"/>
+    </resultMap>
+
+    <insert id="write" parameterType="reviewCommentDto">
+        insert into review_comment
+            (review_id, user_id, content)
+        values (#{review_id}, #{userid}, #{content})
+    </insert>
+
+    <select id="list" parameterType="int" resultMap="reviewMap">
+        select review_id, user_id, register_time, 'like'
+        from review_comment
+        where review_id = #{review_id}
+    </select>
+
+    <update id="modify" parameterType="reviewCommentDto">
+        update review_comment
+        set content = #{content}
+        where review_id = #{review_id} and comment_id = #{comment_id}
+    </update>
+
+    <update id="updateLike" parameterType="reviewCommentDto">
+        update review_comment
+        set like = like + 1
+        where review_id = #{review_id} and comment_id = #{comment_id}
+    </update>
+    
+    <delete id="delete" parameterType="int">
+        delete from review_comment where review_id = #{review_id} and comment_id = #{comment_id}
+    </delete>
+
+</mapper>
