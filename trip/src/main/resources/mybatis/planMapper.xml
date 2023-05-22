@@ -13,6 +13,7 @@
         <result column="end_date" property="end_date" jdbcType="TIMESTAMP" javaType="String" />
         <result column="like" property="like" jdbcType="INTEGER" javaType="int" />
         <result column="hit" property="hit" jdbcType="INTEGER" javaType="int" />
+        <result column="store" property="store" jdbcType="VARCHAR" javaType="String" />
     </resultMap>
 
 
@@ -25,8 +26,8 @@
 
     <insert id="makePlan" parameterType="PlanDto">
         insert into travel_plan
-        (user_id, title, content, start_date, end_date, `like`, hit)
-        values(#{user_id}, #{title}, #{content}, #{start_date}, #{end_date}, 0, 0);
+        (user_id, title, content, start_date, end_date, store)
+        values(#{user_id}, #{title}, #{content}, #{start_date}, #{end_date}, #{store});
     </insert>
 
     <select id="getPlanId" parameterType="String" resultType="int">
@@ -47,7 +48,8 @@
         set title = #{title},
         content = #{content},
         start_date = #{start_date},
-        end_date = #{end_date}
+        end_date = #{end_date},
+        store = #{store}
         where plan_id = #{plan_id};
     </update>
 
@@ -74,5 +76,41 @@
         set `like` = `like` - 1
         where plan_id = #{plan_id};
     </update>
+
+    <insert id="makeLike" parameterType="PlanDto">
+        insert into plan_like
+        (plan_id, user_id)
+        values (#{plan_id}, #{user_id});
+    </insert>
+
+    <delete id="deleteLike" parameterType="PlanDto">
+        delete from
+        plan_like
+        where plan_id = #{plan_id} and user_id = #{user_id};
+    </delete>
+    
+    <insert id="userPlanMake" parameterType="UserPlanDto">
+        insert into user_plan_info
+        (plan_id, name, vicinity, photo, url, sequence)
+        values (#{plan_id}, #{name}, #{vicinity}, #{photo}, #{url}, #{sequence});
+    </insert>
+    
+    <delete id="userPlanDelete" parameterType="int">
+        delete
+        from user_plan_info
+        where plan_id = #{plan_id};
+    </delete>
+    
+
+    <update id="userPlanUpdate" parameterType="UserPlanDto">
+        update user_plan_info
+        set name = #{name},
+        vicinity = #{vicinity},
+        photo = #{photo},
+        url = #{url},
+        sequence = #{sequence}
+        where plan_id = #{plan_id};
+    </update>
+
 
 </mapper>

@@ -5,6 +5,7 @@ import com.ssafy.trip.dto.place.PlaceDto;
 import com.ssafy.trip.dto.place.PlanPlaceDto;
 import com.ssafy.trip.dto.plan.PlanDto;
 import com.ssafy.trip.dto.plan.PlanInfoDto;
+import com.ssafy.trip.dto.plan.UserPlanDto;
 import com.ssafy.trip.service.place.PlaceService;
 import com.ssafy.trip.service.plan.PlanService;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/plan")
+@CrossOrigin(origins = "http://localhost:8080")
 public class PlanController {
     private PlanService planService;
     private PlaceService placeService;
@@ -61,21 +63,53 @@ public class PlanController {
 
     @PostMapping("/api") // 계획 생성 : 글, 장소 정보 다 저장
     ResponseEntity<Map<String, Object>> make(@RequestBody Map<String, Object> map){
-
+        System.out.println("post" + map);
+        Map<String, Object> resmap = new HashMap<>();
         PlanDto planDto = new PlanDto();
-        planDto.setUser_id((String) map.get("user_id"));
+//        planDto.setUser_id((String) map.get("user_id"));
+        planDto.setUser_id("ssafy");
         planDto.setTitle((String) map.get("title"));
         planDto.setContent((String) map.get("content"));
         planDto.setStart_date((String) map.get("start_date"));
         planDto.setEnd_date((String) map.get("end_date"));
+        planDto.setStore((String) map.get("store"));
 
-        List<String> placeId = (List<String>) map.get("place_id");
-        String user_id = (String) map.get("user_id");
+        System.out.println(planDto);
+
+        List<Map<String, Object>> plans = (List<Map<String, Object>>) map.get("plans");
+        List<String> placeId = new ArrayList<>();
+
+
+//        String user_id = (String) map.get("user_id");
+        String user_id = "ssafy";
 
         try {
             planService.makePlan(planDto);
             int plan_id = planService.getPlanId(user_id);
+            resmap.put("plan_id", plan_id);
             int idx = 1;
+
+            for (Map<String, Object> plan : plans) {
+                UserPlanDto userPlanDto = new UserPlanDto();
+                userPlanDto.setPlan_id(plan_id);
+                userPlanDto.setName((String) plan.get("name"));
+                userPlanDto.setVicinity((String) plan.get("vicinity"));
+                userPlanDto.setPhoto((String) plan.get("photo"));
+                userPlanDto.setUrl((String) plan.get("url"));
+                userPlanDto.setSequence(idx++);
+
+                placeId.add((String) plan.get("place_id"));
+                planService.userPlanMake(userPlanDto);
+            }
+
+            if (plans.size() < 1){
+                UserPlanDto userPlanDto = new UserPlanDto();
+                userPlanDto.setPlan_id(plan_id);
+                planService.userPlanMake(userPlanDto);
+            }
+
+
+            idx = 1;
             for (String id : placeId) {
                 PlanPlaceDto planPlaceDto = new PlanPlaceDto();
                 if (!placeService.checkPlaceId(id)){
@@ -88,7 +122,7 @@ public class PlanController {
 
                 placeService.addPlanPlace(planPlaceDto);
             }
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(resmap, HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -152,22 +186,40 @@ public class PlanController {
     // 계획 수정 , 장소 경로 수정
     @PutMapping("/api")
     ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> map){
-
+        System.out.println("put" + map);
         PlanDto planDto = new PlanDto();
-        int plan_id = Integer.parseInt((String) map.get("plan_id"));
+        System.out.println(map.get("plan_id"));
+        int plan_id = (int) map.get("plan_id");
         planDto.setPlan_id(plan_id);
 //        planDto.setUser_id((String) map.get("user_id"));
         planDto.setTitle((String) map.get("title"));
         planDto.setContent((String) map.get("content"));
         planDto.setStart_date((String) map.get("start_date"));
         planDto.setEnd_date((String) map.get("end_date"));
+        planDto.setStore((String) map.get("store"));
 
-        List<String> placeId = (List<String>) map.get("place_id");
+//        List<String> placeId = (List<String>) map.get("place_id");
 
+        List<Map<String, Object>> plans = (List<Map<String, Object>>) map.get("plans");
+        List<String> placeId = new ArrayList<>();
 
         try {
             planService.updatePlan(planDto);
             int idx = 1;
+            planService.userPlanDelete(plan_id);
+            for (Map<String, Object> plan : plans) {
+                UserPlanDto userPlanDto = new UserPlanDto();
+                userPlanDto.setPlan_id(plan_id);
+                userPlanDto.setName((String) plan.get("name"));
+                userPlanDto.setVicinity((String) plan.get("vicinity"));
+                userPlanDto.setPhoto((String) plan.get("photo"));
+                userPlanDto.setUrl((String) plan.get("url"));
+                userPlanDto.setSequence(idx++);
+
+                placeId.add((String) plan.get("place_id"));
+                planService.userPlanMake(userPlanDto);
+            }
+            idx = 1;
             placeService.deletePlanPlace(plan_id);
             for (String id : placeId) {
                 PlanPlaceDto planPlaceDto = new PlanPlaceDto();
@@ -226,9 +278,16 @@ public class PlanController {
     @PutMapping("/api/uplike")
     ResponseEntity<Map<String, Object>> upLike(@RequestBody Map<String, Object> map){
 
+        PlanDto planDto = new PlanDto();
         int plan_id = Integer.parseInt((String) map.get("plan_id"));
+        String user_id = (String) map.get("user_id");
+
+        planDto.setPlan_id(plan_id);
+        planDto.setUser_id(user_id);
+
         try {
             planService.upLike(plan_id);
+            planService.makeLike(planDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
@@ -239,10 +298,31 @@ public class PlanController {
     @PutMapping("/api/downlike")
     ResponseEntity<Map<String, Object>> downLike(@RequestBody Map<String, Object> map){
 
+        PlanDto planDto = new PlanDto();
         int plan_id = Integer.parseInt((String) map.get("plan_id"));
+        String user_id = (String) map.get("user_id");
+
+        planDto.setPlan_id(plan_id);
+        planDto.setUser_id(user_id);
+
         try {
             planService.downLike(plan_id);
+            planService.deleteLike(planDto);
             return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/api/photo/{place_id}")
+    ResponseEntity<Map<String, Object>> getPhotoInfo(@PathVariable("place_id") String id){
+        Map<String, Object> map = new HashMap<>();
+        PlaceDto placeDto = detailInfo(id);
+        try {
+            String photo = placeDto.getPhotoreference();
+            map.put("photo", photo);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,14 +1,13 @@
 package com.ssafy.trip.dto.plan;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
 public class PlanCommentDto {
-    int plan_id;
-    String user_id;
-    String content;
-    String register_time;
-    int like;
+    private int comment_id;
+    private int plan_id;
+    private String user_id;
+    private String content;
+    private String register_time;
+    private int like;
 }
