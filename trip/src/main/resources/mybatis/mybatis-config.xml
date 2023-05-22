@@ -6,6 +6,8 @@
 
     <typeAliases>
         <typeAlias type="com.ssafy.trip.dto.plan.PlanDto" alias="PlanDto"/>
+        <typeAlias type="com.ssafy.trip.dto.plan.UserPlanDto" alias="UserPlanDto"/>
+        <typeAlias type="com.ssafy.trip.dto.plan.PlanCommentDto" alias="PlanCommentDto"/>
         <typeAlias type="com.ssafy.trip.dto.place.PlaceDto" alias="PlaceDto"/>
         <typeAlias type="com.ssafy.trip.dto.place.PlanPlaceDto" alias="PlanPlaceDto"/>
         <typeAlias type="com.ssafy.trip.dto.review.ReviewDto" alias="reviewDto"/>
@@ -16,6 +18,7 @@
 
     <mappers>
         <mapper resource="mybatis/planMapper.xml"/>
+        <mapper resource="mybatis/planCommentMapper.xml"/>
         <mapper resource="mybatis/placeMapper.xml"/>
         <mapper resource="mybatis/ReviewMapper.xml"/>
         <mapper resource="mybatis/UserMapper.xml"/>

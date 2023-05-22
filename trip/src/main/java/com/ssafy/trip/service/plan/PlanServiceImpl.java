@@ -1,6 +1,7 @@
 package com.ssafy.trip.service.plan;
 
 import com.ssafy.trip.dto.plan.PlanDto;
+import com.ssafy.trip.dto.plan.UserPlanDto;
 import com.ssafy.trip.repository.plan.PlanRepository;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,31 @@ public class PlanServiceImpl implements PlanService{
     @Override
     public void downLike(int plan_id) {
         planRepository.downLike(plan_id);
+    }
+
+    @Override
+    public void makeLike(PlanDto planDto) {
+        planRepository.makeLike(planDto);
+    }
+
+    @Override
+    public void deleteLike(PlanDto planDto) {
+        planRepository.deleteLike(planDto);
+    }
+
+    @Override
+    public void userPlanMake(UserPlanDto userPlanDto) {
+        planRepository.userPlanMake(userPlanDto);
+    }
+
+    @Override
+    public void userPlanUpdate(UserPlanDto userPlanDto) {
+        planRepository.userPlanUpdate(userPlanDto);
+    }
+
+    @Override
+    public void userPlanDelete(int plan_id) {
+        planRepository.userPlanDelete(plan_id);
     }
 
 

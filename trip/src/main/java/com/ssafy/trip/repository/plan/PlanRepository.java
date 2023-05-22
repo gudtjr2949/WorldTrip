@@ -1,6 +1,7 @@
 package com.ssafy.trip.repository.plan;
 
 import com.ssafy.trip.dto.plan.PlanDto;
+import com.ssafy.trip.dto.plan.UserPlanDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,7 +17,11 @@ public interface PlanRepository {
     void updateHit(int plan_id);
     void upLike(int plan_id);
     void downLike(int plan_id);
+    void makeLike(PlanDto planDto);
+    void deleteLike(PlanDto planDto);
 
-
+    void userPlanMake(UserPlanDto userPlanDto);
+    void userPlanUpdate(UserPlanDto userPlanDto);
+    void userPlanDelete(int plan_id);
 
 }
