@@ -9,6 +9,7 @@ import java.util.Map;
 
 public interface ReviewService {
     void write(ReviewDto reviewDto);
+    int getMaxReviewId();
     List<ReviewDto> list(Map<String, String> map);
     ReviewDto select(int review_id);
     List<ReviewDto> my_list(String user_id);

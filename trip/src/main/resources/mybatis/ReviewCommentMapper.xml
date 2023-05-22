@@ -21,12 +21,12 @@
 
     <insert id="write" parameterType="reviewCommentDto">
         insert into review_comment
-            (review_id, user_id, content)
-        values (#{review_id}, #{userid}, #{content})
+        (review_id, user_id, content, `like`)
+        values (#{review_id}, #{user_id}, #{content}, '0')
     </insert>
 
-    <select id="list" parameterType="int" resultMap="reviewMap">
-        select review_id, user_id, register_time, 'like'
+    <select id="list" parameterType="int" resultMap="reviewCommentMap">
+        select review_id, comment_id, user_id, content, register_time, `like`
         from review_comment
         where review_id = #{review_id}
     </select>
@@ -39,7 +39,7 @@
 
     <update id="updateLike" parameterType="reviewCommentDto">
         update review_comment
-        set like = like + 1
+        set `like` = `like` + 1
         where review_id = #{review_id} and comment_id = #{comment_id}
     </update>
     

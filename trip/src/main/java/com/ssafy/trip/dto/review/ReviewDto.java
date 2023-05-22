@@ -11,6 +11,7 @@ public class ReviewDto {
     String title;
     String content;
     String register_time;
+    String first_image;
     int plan_id;
     int like;
     int hit;

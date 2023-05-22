@@ -1,23 +1,33 @@
 package com.ssafy.trip.controller;
 
 import com.ssafy.trip.dto.user.UserDto;
+import com.ssafy.trip.service.user.OAuthService;
 import com.ssafy.trip.service.user.UserService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:8080")
 public class UserController {
 
     private UserService userService;
+    private OAuthService oAuthService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, OAuthService oAuthService) {
         this.userService = userService;
+        this.oAuthService = oAuthService;
     }
 
     @GetMapping("/api/idCheck/{user_id}")
@@ -60,7 +70,7 @@ public class UserController {
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> map, HttpSession session) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> map) {
         Map<String, String> res = new HashMap<>();
 
         String user_id = map.get("user_id");
@@ -70,12 +80,11 @@ public class UserController {
             UserDto userDto = userService.login(user_id, user_pw);
 
             if (userDto != null) {
-                session.setAttribute("user_id", userDto.getUser_id());
-                session.setAttribute("user_name", userDto.getUser_name());
-
+                res.put("user_id", userDto.getUser_id());
+                res.put("user_name", userDto.getUser_name());
                 res.put("resmsg", "로그인 성공");
             } else {
-                res.put("resmsg", "로그인 실패");
+                return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
             res.put("resmsg", "로그인 실패");
@@ -85,23 +94,48 @@ public class UserController {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/api/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpSession session) {
+    @GetMapping("/api/kakao/callback")
+    public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) throws UnsupportedEncodingException {
         Map<String, String> res = new HashMap<>();
 
-        try {
-            // 세션 무효화
-            session.invalidate();
+        UserDto userDto = oAuthService.getKakaoAccessToken(code);
 
-            res.put("resmsg", "로그아웃 성공");
+        try {
+            if (userService.idCheck(userDto.getUser_id())) { // 카카오 회원 정보를 DB에 넣어야 함
+                userService.join(userDto);
+            }
+
+            res.put("user_id", userDto.getUser_id());
+            res.put("user_name", userDto.getUser_name());
+            res.put("resmsg", "카카오 로그인 성공");
         } catch (Exception e) {
-            res.put("resmsg", "로그아웃 실패");
+            res.put("resmsg", "카카오 로그인 실패");
+            return ResponseEntity.notFound().build();
+        }
+
+        // Vue.js의 Main 페이지로 리다이렉트
+//        String redirectUrl = "http://localhost:8080?user_id=" + userDto.getUser_id() + "&user_name=" + URLEncoder.encode(userDto.getUser_name(), String.valueOf(StandardCharsets.UTF_8)); // Main 페이지 경로
+        String redirectUrl = "http://localhost:8080?user_id=" + userDto.getUser_id() + "&user_name=" +URLEncoder.encode(userDto.getUser_name(), String.valueOf(StandardCharsets.UTF_8));
+//        String redirectUrl = "http://localhost:8080";
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, redirectUrl)
+                .body(res);
+    }
+
+    @GetMapping("/api/mypage/{user_id}")
+    public ResponseEntity<Map<String, Object>> mypage(@PathVariable("user_id") String user_id) {
+        Map<String, Object> res = new HashMap<>();
+
+        try {
+            res.put("user", userService.mypage(user_id));
+            res.put("resmsg", "마이페이지 조회 성공");
+        } catch (Exception e) {
+            res.put("resmsg", "마이페이지 조회 실패");
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(res);
     }
-
 
     @GetMapping("/api/follower_list/{user_id}")
     public ResponseEntity<Map<String, Object>> follower_list(@PathVariable("user_id") String user_id) {
@@ -111,6 +145,7 @@ public class UserController {
             List<UserDto> list = userService.follower_list(user_id);
 
             res.put("list", list);
+
             res.put("resmsg", "날 팔로우하는 사람 조회 성공");
         } catch (Exception e) {
             res.put("resmsg", "날 팔로우하는 사람 조회 실패");

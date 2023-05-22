@@ -25,8 +25,8 @@
 
     <insert id="makePlan" parameterType="PlanDto">
         insert into travel_plan
-        (user_id, title, content, start_date, end_date)
-        values(#{user_id}, #{title}, #{content}, #{start_date}, #{end_date});
+        (user_id, title, content, start_date, end_date, `like`, hit)
+        values(#{user_id}, #{title}, #{content}, #{start_date}, #{end_date}, 0, 0);
     </insert>
 
     <select id="getPlanId" parameterType="String" resultType="int">

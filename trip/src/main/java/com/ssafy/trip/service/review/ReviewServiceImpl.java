@@ -22,6 +22,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public int getMaxReviewId() {
+        return reviewRepository.getMaxReviewId();
+    }
+
+    @Override
     public List<ReviewDto> list(Map<String, String> map) {
         return reviewRepository.list(map);
     }
