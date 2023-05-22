@@ -35,6 +35,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto mypage(String user_id) {
+        return userRepository.mypage(user_id);
+    }
+
+    @Override
     public List<UserDto> follower_list(String user_id) {
         return userRepository.follower_list(user_id);
     }

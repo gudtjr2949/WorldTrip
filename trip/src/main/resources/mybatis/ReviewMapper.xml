@@ -15,6 +15,8 @@
                 javaType="String"/>
         <result column="register_time" property="register_time"
                 jdbcType="TIMESTAMP" javaType="String"/>
+        <result column="first_image" property="first_image"
+                jdbcType="VARCHAR" javaType="String"/>
         <result column="plan_id" property="plan_id"
                 jdbcType="INTEGER" javaType="int"/>
         <result column="like" property="like" jdbcType="INTEGER"
@@ -35,36 +37,36 @@
     </sql>
 
     <insert id="write" parameterType="reviewDto">
-        insert into travel_review (user_id, title, content)
-        values (#{user_id}, #{title}, #{content})
+        insert into travel_review (user_id, title, content, first_image)
+        values (#{user_id}, #{title}, #{content}, #{first_image})
     </insert>
 
+    <select id="getMaxReviewId" resultType="java.lang.Integer">
+        SELECT MAX(review_id) FROM travel_review
+    </select>
+
     <select id="list" parameterType="map" resultMap="reviewMap">
-        select user_id, review_id, title, `like`, hit, register_time
+        select user_id, review_id, title, `like`, hit, register_time, first_image
         from travel_review
-        <include refid="search"></include>
+<!--        <include refid="search"></include>-->
     </select>
 
     <select id="select" parameterType="int" resultType="reviewDto">
-        select user_id, review_id, title, `like`, hit, register_time
+        select user_id, review_id, title, content, `like`, hit, register_time
         from travel_review
         where review_id = #{review_id}
     </select>
 
     <select id="my_list" parameterType="String" resultMap="reviewMap">
-        select user_id, review_id, title, `like`, hit, register_time
+        select user_id, review_id, title, `like`, hit, register_time, first_image
         from travel_review
         where user_id = #{user_id}
-        <!-- order by review_id desc -->
     </select>
 
     <select id="follower_list" parameterType="String" resultMap="reviewMap">
-        select user_id, review_id, title, `like`, hit, register_time
+        select user_id, review_id, title, `like`, hit, register_time, first_image
         from travel_review
         where user_id in (select follower_id from follower where user_id = #{user_id})
-<!--        <include refid="search"></include>-->
-<!--        order by review_id desc-->
-<!--        limit #{start}, #{listsize}-->
     </select>
 
     <update id="modify" parameterType="reviewDto">
@@ -74,21 +76,23 @@
         <if test="plan_id != 0">
             , plan_id = #{plan_id}
         </if>
-        where review_id =
-              #{review_id}
+
+        <if test="plan_id == 0">
+            , plan_id = null
+        </if>
+
+        where review_id = #{review_id}
     </update>
 
     <update id="updateHit" parameterType="int">
         update travel_review
-        set hit
-                = hit + 1
+        set hit = hit + 1
         where review_id = #{review_id}
     </update>
 
     <update id="updateLike" parameterType="int">
         update travel_review
-        set like
-                = like + 1
+        set `like` = `like` + 1
         where review_id = #{review_id}
     </update>
 

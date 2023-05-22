@@ -37,11 +37,17 @@
         from user
         where user_id = #{user_id} and user_pw = #{user_pw}
     </select>
+    
+    <select id="mypage" parameterType="String" resultType="userDto">
+        select *
+        from user
+        where user_id = #{user_id}
+    </select>
 
     <select id="follower_list" parameterType="String" resultMap="userMap">
         select *
         from user
-        where user_id in (select user_id from follower where follower_id = #{user_id})
+        where user_id in (select follower_id from follower where user_id = #{user_id})
     </select>
 
     <select id="following_list" parameterType="String" resultMap="userMap">

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/review_comment")
 public class ReviewCommentController {
@@ -22,12 +23,11 @@ public class ReviewCommentController {
     public ResponseEntity<Map<String, String>> write(@RequestBody Map<String, String> map) {
         Map<String, String> res = new HashMap<>();
 
-
         try {
             ReviewCommentDto reviewCommentDto = new ReviewCommentDto();
 
             reviewCommentDto.setReview_id(Integer.parseInt(map.get("review_id")));
-            reviewCommentDto.setComment_id(Integer.parseInt(map.get("comment_id")));
+            reviewCommentDto.setUser_id(map.get("user_id"));
             reviewCommentDto.setContent(map.get("content"));
 
             reviewCommentService.write(reviewCommentDto);

@@ -17,7 +17,11 @@ public class ReviewImageServiceImpl implements ReviewImageService {
 
     @Override
     public void insert(List<ImageDto> images) {
-        reviewImageRepository.insert(images);
+        for (int i = 0 ; i < images.size() ; i++) {
+            ImageDto imageDto = images.get(i);
+            imageDto.setImage_id(i);
+            reviewImageRepository.insert(imageDto);
+        }
     }
 
     @Override
@@ -26,7 +30,18 @@ public class ReviewImageServiceImpl implements ReviewImageService {
     }
 
     @Override
+    public List<ImageDto> firstImage() {
+        return reviewImageRepository.firstImage();
+    }
+
+    @Override
     public void modify(List<ImageDto> images) {
-        reviewImageRepository.modify(images);
+        int review_id = images.get(0).getReview_id();
+
+        reviewImageRepository.delete(review_id);
+
+        for (int i = 0 ; i < images.size() ; i++) {
+            reviewImageRepository.insert(images.get(i));
+        }
     }
 }

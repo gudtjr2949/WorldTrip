@@ -7,7 +7,8 @@ import java.util.List;
 
 @Mapper
 public interface ReviewImageRepository {
-    void insert(List<ImageDto> images);
+    void insert(ImageDto imageDto);
     List<ImageDto> list(int review_id);
-    void modify(List<ImageDto> images);
+    List<ImageDto> firstImage();
+    void delete(int review_id);
 }

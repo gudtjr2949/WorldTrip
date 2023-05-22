@@ -7,5 +7,6 @@ import java.util.List;
 public interface ReviewImageService {
     void insert(List<ImageDto> images);
     List<ImageDto> list(int review_id);
+    List<ImageDto> firstImage();
     void modify(List<ImageDto> images);
 }

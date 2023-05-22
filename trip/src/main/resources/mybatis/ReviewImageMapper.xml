@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.ssafy.trip.repository.review.ReviewImageRepository">
+    <resultMap id="reviewImageMap" type="reviewImageDto">
+        <result column="image_id" property="image_id"
+                jdbcType="INTEGER" javaType="int"/>
+        <result column="review_id" property="review_id"
+                jdbcType="INTEGER" javaType="int"/>
+        <result column="image_name" property="image_name"
+                jdbcType="VARCHAR" javaType="String"/>
+        <result column="image_path" property="image_path"
+                jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="reviewImageDto">
+        insert into image (review_id, image_id, image_name, image_path)
+        values (#{review_id}, #{image_id}, #{image_name}, #{image_path})
+    </insert>
+
+    <select id="list" parameterType="int" resultMap="reviewImageMap">
+        select review_id, image_id, image_name, image_path
+        from image
+        where review_id = #{review_id}
+    </select>
+
+<!--    <select id="firstImage" resultType="reviewImageMap">-->
+<!--        select review_id, image_id, image_name, image_path-->
+<!--        from image-->
+<!--        ORDER BY image_id ASC LIMIT 1-->
+<!--    </select>-->
+
+    <delete id="delete" parameterType="int">
+        delete
+        from image
+        where review_id = #{review_id}
+    </delete>
+
+</mapper>
