@@ -13,6 +13,11 @@
 
 ![image](https://github.com/gudtjr2949/WorldTrip/assets/83962223/88c8b4af-eddb-464d-80dc-d22ea6ad17d1)
 
+### Project Structure
+
+- trip : Back-end
+- map-project : Front-end
+
 ### Project Main Function
 
 - 여행지, 장소를 입력할 경우, 어느 장소에서 출발해서 어떤 경로로 가야하는 지 시간과 거리를 기준으로 경로 생성
